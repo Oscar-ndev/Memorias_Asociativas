@@ -1,6 +1,12 @@
 import tkinter as tk
 from collections import deque
 
+# Ventana principal
+root = tk.Tk()
+root.title("Práctica 2: Juego de las Fichas")
+root.geometry("800x600+400+100")
+root.resizable(False, False)
+root.config(bg="lightblue") 
 
 # Convertir el estado a una lista bidimensional
 def convertir_estado_a_matriz(estado):
@@ -46,10 +52,10 @@ def busqueda_amplitud(estado_inicial, estado_objetivo):
     cola = deque([(convertir_estado_a_matriz(estado_inicial), [estado_inicial])])  # Cola FIFO
     visitados = set()
 
-    print("\nEvolución de la cola durante la búsqueda en amplitud:")
-
+    text_box.insert(tk.END, "Búsqueda en Amplitud:\n")
     while cola:
-        print(', '.join([convertir_matriz_a_estado(e[0]) for e in cola]))
+        resultado = ', '.join([convertir_matriz_a_estado(e[0]) for e in cola])
+        text_box.insert(tk.END, f", {resultado}\n")  # Agregar cada paso al text_box1
 
         matriz_actual, camino = cola.popleft()
         estado_actual = convertir_matriz_a_estado(matriz_actual)
@@ -71,13 +77,12 @@ def busqueda_amplitud(estado_inicial, estado_objetivo):
 def busqueda_profundidad(estado_inicial, estado_objetivo):
     pila = [(convertir_estado_a_matriz(estado_inicial), [estado_inicial])]  # Pila LIFO
     visitados = set()
-
     #print("\nEvolución de la pila durante la búsqueda en profundidad:")
-
+    text_box1.insert(tk.END, "Búsqueda en Profundidad:\n")
     while pila:
         # Imprimir el estado actual de la pila
-        print(', '.join([convertir_matriz_a_estado(pila[-1][0])] + [convertir_matriz_a_estado(e[0]) for e in pila[:-1]]))
-
+        resutladopila = ', '.join([convertir_matriz_a_estado(pila[-1][0])] + [convertir_matriz_a_estado(e[0]) for e in pila[:-1]])
+        text_box1.insert(tk.END, f", {resutladopila}\n")  # Agregar cada paso al text_box1
         matriz_actual, camino = pila.pop()
         estado_actual = convertir_matriz_a_estado(matriz_actual)
 
@@ -96,23 +101,8 @@ def busqueda_profundidad(estado_inicial, estado_objetivo):
 
 # Función principal que ejecuta ambos algoritmos
 def resolver_juego(estado_inicial, estado_objetivo):
-    print("Resolviendo por Amplitud...")
     solucion_amplitud = busqueda_amplitud(estado_inicial, estado_objetivo)
-    if solucion_amplitud:
-        print("Solución por Amplitud:", solucion_amplitud)
-    else:
-        print("No se encontró solución por amplitud.")
-
-    print("\nResolviendo por Profundidad...")
     solucion_profundidad = busqueda_profundidad(estado_inicial, estado_objetivo)
-    if solucion_profundidad:
-        print("Solución por Profundidad:", solucion_profundidad)
-    else:
-        print("No se encontró solución por profundidad.")
-
-
-
-
 
 def validar_un_caracter(entrada):
     return len(entrada) <= 1
@@ -151,12 +141,7 @@ def Limpiar_Contenido():
     
 
 
-# Ventana principal
-root = tk.Tk()
-root.title("Práctica 2: Juego de las Fichas")
-root.geometry("800x600+400+100")
-root.resizable(False, False)
-root.config(bg="lightblue") 
+
 
 # Crear un botón
 btnJugar = tk.Button(root, text="Jugar", command=leer_entrys, font=("Aptos", 20), bg="blue", fg="white")
@@ -206,11 +191,11 @@ lblFicha4f = tk.Entry(root, width=2, font=("Aptos", 40))
 lblFicha4f.place(x= 90, y=460)
 lblFicha4f.insert(0,'2')
 lblFicha4f.config(justify="center", state="disabled")
-text_box = tk.Text(root, width=20, height=10, font=("Helvetica", 16))  # Fuente más grande
+text_box = tk.Text(root, width=20, height=15, font=("Helvetica", 16))  # Fuente más grande
 text_box.place(x=200, y=120)
 
 
-text_box1 = tk.Text(root, width=22, height=10, font=("Helvetica", 16))  # Fuente más grande
+text_box1 = tk.Text(root, width=22, height=15, font=("Helvetica", 16))  # Fuente más grande
 text_box1.place(x=500, y=120)
 
 
