@@ -6,14 +6,14 @@ from collections import deque
 def obtener_movimientos(posicion):
     movimientos = []
     fila, columna = posicion
-    if fila > 0:  # Movimiento hacia arriba
-        movimientos.append((fila - 1, columna))
-    if fila < 1:  # Movimiento hacia abajo
-        movimientos.append((fila + 1, columna))
     if columna > 0:  # Movimiento hacia la izquierda
         movimientos.append((fila, columna - 1))
     if columna < 1:  # Movimiento hacia la derecha
         movimientos.append((fila, columna + 1))
+    if fila > 0:  # Movimiento hacia arriba
+        movimientos.append((fila - 1, columna))
+    if fila < 1:  # Movimiento hacia abajo
+        movimientos.append((fila + 1, columna))
     return movimientos
 
 # Función para intercambiar el espacio vacío con una ficha
@@ -92,12 +92,14 @@ def leer_entrys():
     # Ejecutar búsqueda en amplitud
     resultado_amplitud = busqueda_amplitud(estado_inicial, estado_final)
     text_box.insert(tk.END, "Búsqueda en Amplitud:\n")
+    text_box.insert(tk.END, f"{estado_inicial}\n")
     for paso in resultado_amplitud:
         text_box.insert(tk.END, f"{paso}\n")  # Agregar cada paso al text_box1
 
      # Ejecutar búsqueda en profundidad
     resultado_profundidad = busqueda_profundidad(estado_inicial, estado_final)
     text_box1.insert(tk.END, "Búsqueda en Profundidad:\n")
+    text_box1.insert(tk.END, f"{estado_inicial}\n")
     for paso1 in resultado_profundidad:
         text_box1.insert(tk.END, f"{paso1}\n")  # Agregar cada paso al text_box1
 
@@ -112,10 +114,6 @@ def Limpiar_Contenido():
     lblFicha2.delete(0, tk.END)
     lblFicha3.delete(0, tk.END)
     lblFicha4.delete(0, tk.END)
-    # lblFicha1f.delete(0, tk.END)
-    # lblFicha2f.delete(0, tk.END)
-    # lblFicha3f.delete(0, tk.END)
-    # lblFicha4f.delete(0, tk.END)
     text_box.delete(1.0, tk.END)
     text_box1.delete(1.0, tk.END)
     btnJugar.config(state="normal")
@@ -165,19 +163,19 @@ lblFinalState.config(bg="lightblue")
 lblFicha1f = tk.Entry(root, width=2, font=("Aptos", 40))
 lblFicha1f.place(x= 30, y=395)
 lblFicha1f.insert(0,'0')
-lblFicha1f.config(justify="center")
+lblFicha1f.config(justify="center", state="disabled")
 lblFicha2f = tk.Entry(root, width=2, font=("Aptos", 40))
 lblFicha2f.place(x= 90, y=395)
 lblFicha2f.insert(0,'3')
-lblFicha2f.config(justify="center")
+lblFicha2f.config(justify="center", state="disabled")
 lblFicha3f = tk.Entry(root, width=2, font=("Aptos", 40))
 lblFicha3f.place(x= 30, y=460)
 lblFicha3f.insert(0,'1')
-lblFicha3f.config(justify="center")
+lblFicha3f.config(justify="center", state="disabled")
 lblFicha4f = tk.Entry(root, width=2, font=("Aptos", 40))
 lblFicha4f.place(x= 90, y=460)
 lblFicha4f.insert(0,'2')
-lblFicha4f.config(justify="center")
+lblFicha4f.config(justify="center", state="disabled")
 text_box = tk.Text(root, width=20, height=10, font=("Helvetica", 16))  # Fuente más grande
 text_box.place(x=200, y=120)
 
@@ -198,4 +196,3 @@ lblpila.config(bg="lightblue")
 
 
 root.mainloop() 
-
