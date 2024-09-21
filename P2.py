@@ -2,72 +2,117 @@ import tkinter as tk
 from collections import deque
 
 
-# Función que genera los posibles movimientos de fichas
-def obtener_movimientos(posicion):
+# Convertir el estado a una lista bidimensional
+def convertir_estado_a_matriz(estado):
+    return [list(estado[:2]), list(estado[2:])]
+
+# Convertir la matriz de vuelta a cadena
+def convertir_matriz_a_estado(matriz):
+    return ''.join(matriz[0] + matriz[1])
+
+# Función para mover la ficha 'b' en las 4 direcciones posibles
+def mover_ficha(matriz):
+    for i in range(2):
+        for j in range(2):
+            if matriz[i][j] == 'b':
+                fila_b, col_b = i, j
+
     movimientos = []
-    fila, columna = posicion
-    if columna > 0:  # Movimiento hacia la izquierda
-        movimientos.append((fila, columna - 1))
-    if columna < 1:  # Movimiento hacia la derecha
-        movimientos.append((fila, columna + 1))
-    if fila > 0:  # Movimiento hacia arriba
-        movimientos.append((fila - 1, columna))
-    if fila < 1:  # Movimiento hacia abajo
-        movimientos.append((fila + 1, columna))
+
+    if col_b > 0:
+        nueva_matriz = [fila[:] for fila in matriz]
+        nueva_matriz[fila_b][col_b], nueva_matriz[fila_b][col_b - 1] = nueva_matriz[fila_b][col_b - 1], nueva_matriz[fila_b][col_b]
+        movimientos.append(nueva_matriz)
+
+    if col_b < 1:
+        nueva_matriz = [fila[:] for fila in matriz]
+        nueva_matriz[fila_b][col_b], nueva_matriz[fila_b][col_b + 1] = nueva_matriz[fila_b][col_b + 1], nueva_matriz[fila_b][col_b]
+        movimientos.append(nueva_matriz)
+
+    if fila_b > 0:
+        nueva_matriz = [fila[:] for fila in matriz]
+        nueva_matriz[fila_b][col_b], nueva_matriz[fila_b - 1][col_b] = nueva_matriz[fila_b - 1][col_b], nueva_matriz[fila_b][col_b]
+        movimientos.append(nueva_matriz)
+
+    if fila_b < 1:
+        nueva_matriz = [fila[:] for fila in matriz]
+        nueva_matriz[fila_b][col_b], nueva_matriz[fila_b + 1][col_b] = nueva_matriz[fila_b + 1][col_b], nueva_matriz[fila_b][col_b]
+        movimientos.append(nueva_matriz)
+
     return movimientos
 
-# Función para intercambiar el espacio vacío con una ficha
-def intercambiar(tablero, pos_vacia, nueva_pos):
-    nuevo_tablero = [fila[:] for fila in tablero]  # Copiar el tablero
-    fila_vacia, col_vacia = pos_vacia
-    nueva_fila, nueva_col = nueva_pos
-    nuevo_tablero[fila_vacia][col_vacia], nuevo_tablero[nueva_fila][nueva_col] = nuevo_tablero[nueva_fila][nueva_col], nuevo_tablero[fila_vacia][col_vacia]
-    return nuevo_tablero
-
-# Función de búsqueda en amplitud (Cola)
-def busqueda_amplitud(estado_inicial, estado_final):
-    cola = deque([(estado_inicial, encontrar_posicion_vacia(estado_inicial), [])])
+# Búsqueda por Amplitud (recorrido en anchura)
+def busqueda_amplitud(estado_inicial, estado_objetivo):
+    cola = deque([(convertir_estado_a_matriz(estado_inicial), [estado_inicial])])  # Cola FIFO
     visitados = set()
+
+    print("\nEvolución de la cola durante la búsqueda en amplitud:")
 
     while cola:
-        tablero, pos_vacia, camino = cola.popleft()
-        if tablero == estado_final:
-            return camino  # Devuelve el camino (secuencia de movimientos)
-        
-        visitados.add(tuple(map(tuple, tablero)))  # Marcar como visitado
-        
-        for movimiento in obtener_movimientos(pos_vacia):
-            nuevo_tablero = intercambiar(tablero, pos_vacia, movimiento)
-            if tuple(map(tuple, nuevo_tablero)) not in visitados:
-                cola.append((nuevo_tablero, movimiento, camino + [nuevo_tablero]))
-    
-    return None  # No hay solución
+        print(', '.join([convertir_matriz_a_estado(e[0]) for e in cola]))
 
-# Función de búsqueda en profundidad (Pila)
-def busqueda_profundidad(estado_inicial, estado_final):
-    pila = [(estado_inicial, encontrar_posicion_vacia(estado_inicial), [])]
+        matriz_actual, camino = cola.popleft()
+        estado_actual = convertir_matriz_a_estado(matriz_actual)
+
+        if estado_actual == estado_objetivo:
+            return camino
+
+        if estado_actual not in visitados:
+            visitados.add(estado_actual)
+
+            for nueva_matriz in mover_ficha(matriz_actual):
+                nuevo_estado = convertir_matriz_a_estado(nueva_matriz)
+                if nuevo_estado not in visitados:
+                    cola.append((nueva_matriz, camino + [nuevo_estado]))
+
+    return None
+
+# Búsqueda por Profundidad (recorrido en profundidad)
+def busqueda_profundidad(estado_inicial, estado_objetivo):
+    pila = [(convertir_estado_a_matriz(estado_inicial), [estado_inicial])]  # Pila LIFO
     visitados = set()
 
-    while pila:
-        tablero, pos_vacia, camino = pila.pop()
-        if tablero == estado_final:
-            return camino  # Devuelve el camino (secuencia de movimientos)
-        
-        visitados.add(tuple(map(tuple, tablero)))  # Marcar como visitado
-        
-        for movimiento in obtener_movimientos(pos_vacia):
-            nuevo_tablero = intercambiar(tablero, pos_vacia, movimiento)
-            if tuple(map(tuple, nuevo_tablero)) not in visitados:
-                pila.append((nuevo_tablero, movimiento, camino + [nuevo_tablero]))
-    
-    return None  # No hay solución
+    #print("\nEvolución de la pila durante la búsqueda en profundidad:")
 
-# Función para encontrar la posición vacía en el tablero
-def encontrar_posicion_vacia(tablero):
-    for fila in range(2):
-        for col in range(2):
-            if tablero[fila][col] ==  0:  # Suponiendo que el 0 representa la casilla vacía
-                return fila, col
+    while pila:
+        # Imprimir el estado actual de la pila
+        print(', '.join([convertir_matriz_a_estado(pila[-1][0])] + [convertir_matriz_a_estado(e[0]) for e in pila[:-1]]))
+
+        matriz_actual, camino = pila.pop()
+        estado_actual = convertir_matriz_a_estado(matriz_actual)
+
+        if estado_actual == estado_objetivo:
+            return camino
+
+        if estado_actual not in visitados:
+            visitados.add(estado_actual)
+
+            for nueva_matriz in mover_ficha(matriz_actual):  # Exploramos en profundidad
+                nuevo_estado = convertir_matriz_a_estado(nueva_matriz)
+                if nuevo_estado not in visitados:
+                    pila.append((nueva_matriz, camino + [nuevo_estado]))
+
+    return None
+
+# Función principal que ejecuta ambos algoritmos
+def resolver_juego(estado_inicial, estado_objetivo):
+    print("Resolviendo por Amplitud...")
+    solucion_amplitud = busqueda_amplitud(estado_inicial, estado_objetivo)
+    if solucion_amplitud:
+        print("Solución por Amplitud:", solucion_amplitud)
+    else:
+        print("No se encontró solución por amplitud.")
+
+    print("\nResolviendo por Profundidad...")
+    solucion_profundidad = busqueda_profundidad(estado_inicial, estado_objetivo)
+    if solucion_profundidad:
+        print("Solución por Profundidad:", solucion_profundidad)
+    else:
+        print("No se encontró solución por profundidad.")
+
+
+
+
 
 def validar_un_caracter(entrada):
     return len(entrada) <= 1
@@ -75,33 +120,18 @@ def validar_un_caracter(entrada):
 def leer_entrys():
     btnJugar.config(state="disabled")
     btnLimpiar.config(state="normal")
-    text1 = int(lblFicha1.get())
-    text2 = int(lblFicha2.get())
-    text3 = int(lblFicha3.get())
-    text4 = int(lblFicha4.get())
-    # text1f = lblFicha1f.get()
-    # text2f = lblFicha2f.get()
-    # text3f = lblFicha3f.get()
-    # text4f = lblFicha4f.get()
+    text1 = lblFicha1.get()
+    text2 = lblFicha2.get()
+    text3 = lblFicha3.get()
+    text4 = lblFicha4.get()
     lblFicha1.config(state="disabled")
     lblFicha2.config(state="disabled")
     lblFicha3.config(state="disabled")
     lblFicha4.config(state="disabled")
-    estado_inicial = [[text1, text2], [text3, text4]]  # El 0 representa la casilla vacía
-    estado_final = [[0, 3], [1, 2]]
-    # Ejecutar búsqueda en amplitud
-    resultado_amplitud = busqueda_amplitud(estado_inicial, estado_final)
-    text_box.insert(tk.END, "Búsqueda en Amplitud:\n")
-    text_box.insert(tk.END, f"{estado_inicial}\n")
-    for paso in resultado_amplitud:
-        text_box.insert(tk.END, f"{paso}\n")  # Agregar cada paso al text_box1
-
-     # Ejecutar búsqueda en profundidad
-    resultado_profundidad = busqueda_profundidad(estado_inicial, estado_final)
-    text_box1.insert(tk.END, "Búsqueda en Profundidad:\n")
-    text_box1.insert(tk.END, f"{estado_inicial}\n")
-    for paso1 in resultado_profundidad:
-        text_box1.insert(tk.END, f"{paso1}\n")  # Agregar cada paso al text_box1
+    estado_inicial = text1+text2+text3+text4
+    estado_objetivo = "b312"
+    resolver_juego(estado_inicial, estado_objetivo)
+    
 
 
 
@@ -162,7 +192,7 @@ lblFinalState.config(bg="lightblue")
 
 lblFicha1f = tk.Entry(root, width=2, font=("Aptos", 40))
 lblFicha1f.place(x= 30, y=395)
-lblFicha1f.insert(0,'0')
+lblFicha1f.insert(0,'b')
 lblFicha1f.config(justify="center", state="disabled")
 lblFicha2f = tk.Entry(root, width=2, font=("Aptos", 40))
 lblFicha2f.place(x= 90, y=395)
