@@ -122,10 +122,31 @@ def obtener_valores():
     resultados_texto += "- Fase de Recuperación -\n"
     resultados_texto += f"{resultado_final_1}\n"
     resultados_texto += f"{resultado_final_2}\n"
-    resultados_texto += f"{resultado_final_3}"
+    resultados_texto += f"{resultado_final_3}\n\n"
 
     # Actualizar el label con los resultados
+    
+    # Fase de recuperación: comparar el valor más alto de cada resultado final
+    resultados_fase_recuperacion = [resultado_final_1, resultado_final_2, resultado_final_3]
+    nombres_y = ["y1", "y2", "y3"]
+
+# Crear matriz V
+    matriz_V = []
+
+    for i, resultado in enumerate(resultados_fase_recuperacion):
+        valor_max = np.max(resultado)  # Valor máximo en el resultado actual
+        matriz_v = [1 if val == valor_max else 0 for val in resultado]  # Crear matriz V con 1 donde esté el valor máximo
+        matriz_V.append(matriz_v)  # Añadir a la lista de matrices V
+
+
+    # Convertir matriz V en un array de NumPy y mostrarla
+    matriz_V = np.array(matriz_V)
+    #print("\nMatriz Y recuperadas:")
+    #print(matriz_V)
+    resultados_texto += "- Patrones Recuperados -\n"
+    resultados_texto += f"{matriz_V}\n"
     resultado_final_label.config(text=resultados_texto)
+
 
 # Ventana principal
 root = tk.Tk()
