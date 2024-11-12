@@ -1,6 +1,4 @@
-""" Práctica 1
-Castañeda Nuñez Nephtali
-López Victorino Oscar Abiud """
+""" Práctica 1 """
 
 animales = ['hamster', 'perro', 'gato', 'pez', 'vaca', 'caballo', 'oso', 'jirafa', 'mono', 'aguila', 'tiburon']
 
