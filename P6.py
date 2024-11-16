@@ -127,18 +127,18 @@ def comparar_vectores(max_matrix, min_matrix, valores_x_final):
     resultados_texto += "Memoria Máx\n"
     for row in max_matrix:
         resultados_texto += f"{row}\n"
-    resultados_texto += "\n\nMemoria Mín\n"
+    resultados_texto += "\nMemoria Mín\n"
     for row in min_matrix:
         resultados_texto += f"{row}\n"
-
+    resultados_texto += "\n"
     for i, vector in enumerate(valores_x_final):
         resultado_max, vector_minimo_max = calcular_resultados(max_matrix, vector, 'max')
         resultado_min, vector_maximo_min = calcular_resultados(min_matrix, vector, 'min')
 
         resultados_texto += f"Resultados para x^{i+1}:\n"
-        resultados_texto += "Vector columna con los mínimos de cada fila (max):\n"
+        resultados_texto += "Recuperación (max):\n"
         resultados_texto += f"{vector_minimo_max}\n"
-        resultados_texto += "Vector columna con los máximos de cada fila (min):\n"
+        resultados_texto += "Recuperación (min):\n"
         resultados_texto += f"{vector_maximo_min}\n\n"
 
     resultado_final_label.config(text=resultados_texto)
