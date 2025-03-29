@@ -117,7 +117,7 @@ def obtener_valores():
 
 # Ventana principal
 root = tk.Tk()
-root.title("Práctica 3: Lernmatrix")
+root.title("Lernmatrix")
 root.geometry("900x650+400+100")
 root.resizable(False, False)
 root.config(bg="lightblue") 

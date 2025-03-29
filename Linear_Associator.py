@@ -123,7 +123,7 @@ def obtener_valores():
 
 # Ventana principal
 root = tk.Tk()
-root.title("Práctica 4: Linear Associator")
+root.title("Linear Associator")
 root.geometry("900x650+400+100")
 root.resizable(False, False)
 root.config(bg="lightblue") 

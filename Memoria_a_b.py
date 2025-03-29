@@ -153,7 +153,7 @@ def calcular_resultados(matriz, vector, tipo):
 
 # Ventana principal
 root = tk.Tk()
-root.title("Práctica 6: Memoria α-β")
+root.title("Memoria α-β")
 root.geometry("900x650+400+100")
 root.resizable(False, False)
 root.config(bg="lightblue")

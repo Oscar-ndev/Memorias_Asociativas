@@ -73,7 +73,7 @@ def obtener_valores():
 
 # Ventana principal
 root = tk.Tk()
-root.title("Práctica 5: Memoria Hopfield")
+root.title("Memoria Hopfield")
 root.geometry("900x650+400+100")
 root.resizable(False, False)
 root.config(bg="lightblue") 
